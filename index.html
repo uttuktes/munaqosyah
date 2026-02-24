@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Munaqosyah - Cek Hasil Seleksi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            border: 1px solid #eaeef2;
+            margin: 10px 0;
+        }
+
+        .header {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #0f172a;
+            line-height: 1.3;
+        }
+
+        .header h1 span {
+            color: #3b82f6;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .header p {
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 20px 15px;
+            background: white;
+        }
+
+        .search-box {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+            color: #0f172a;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .search-btn:hover {
+            background: #2563eb;
+        }
+
+        .search-btn:active {
+            transform: scale(0.98);
+        }
+
+        .search-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px 15px;
+            display: none;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .student-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+            flex-wrap: wrap;
+        }
+
+        .student-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            word-break: break-word;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .student-class {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .student-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .student-class {
+                align-self: flex-start;
+            }
+        }
+
+        .summary-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .summary-item {
+            text-align: center;
+            background: white;
+            padding: 10px 5px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .tests-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 0;
+            width: 100%;
+        }
+
+        .test-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-top: 5px solid;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .test-card.tartil {
+            border-top-color: #3b82f6;
+        }
+
+        .test-card.juz30 {
+            border-top-color: #10b981;
+        }
+
+        .test-card.juz29 {
+            border-top-color: #f59e0b;
+        }
+
+        .test-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .test-name {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .test-name.tartil {
+            color: #2563eb;
+        }
+
+        .test-name.juz30 {
+            color: #059669;
+        }
+
+        .test-name.juz29 {
+            color: #d97706;
+        }
+
+        .test-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .test-status.lulus {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .test-status.tidak-lulus {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .test-status.tidak-ikut {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .score-list {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            width: 100%;
+        }
+
+        .score-item:last-child {
+            border-bottom: none;
+        }
+
+        .score-label {
+            color: #475569;
+            font-size: 13px;
+            word-break: break-word;
+            padding-right: 8px;
+        }
+
+        .score-value {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .test-footer {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-total {
+            font-size: 13px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .test-total span {
+            font-weight: 700;
+            color: #0f172a;
+            margin-left: 4px;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+            border: 1px solid #fecaca;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 25px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .info-note {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+            border: 1px solid #bfdbfe;
+            word-break: break-word;
+        }
+
+        .capital-input {
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .student-name {
+                font-size: 18px;
+            }
+            
+            .student-class {
+                font-size: 14px;
+                padding: 4px 16px;
+            }
+            
+            .summary-value {
+                font-size: 16px;
+            }
+            
+            .test-name {
+                font-size: 15px;
+            }
+            
+            .score-label {
+                font-size: 12px;
+            }
+            
+            .score-value {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span>PENGUMUMAN SELEKSI MUNAQOSYAH</span></h1>
+            <p>Tartil, Juz 30, dan Juz 29</p>
+        </div>
+
+        <div class="content">
+            <div class="info-note">
+                <strong>Informasi:</strong> Masukkan nama lengkap dan kelas untuk melihat hasil seleksi
+            </div>
+
+            <div class="search-box">
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" 
+                           id="nama" 
+                           class="capital-input"
+                           placeholder="Contoh: MUHAMMAD ALI" 
+                           autocomplete="off"
+                           oninput="this.value = this.value.toUpperCase()">
+                </div>
+
+                <div class="form-group">
+                    <label for="kelas">Kelas</label>
+                    <input type="text" 
+                           id="kelas" 
+                           class="capital-input"
+                           placeholder="Contoh: 2A, 3B, 4C, 5D" 
+                           autocomplete="off"
+                           oninput="this.value = this.value.toUpperCase()">
+                </div>
+
+                <button class="search-btn" onclick="cariSiswa()" id="btnSearch">
+                    Cari Data Siswa
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p style="color: #475569;">Mencari data siswa...</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="result-box" id="resultBox">
+                <div class="student-header">
+                    <span class="student-name" id="displayNama"></span>
+                    <span class="student-class" id="displayKelas"></span>
+                </div>
+
+                <div class="summary-section" id="summarySection">
+                </div>
+
+                <div class="tests-grid" id="testsContainer">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 Sistem Informasi Munaqosyah</p>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyCFMEO7iKQO1jOXNJLgxlB9Ow1BXoaEakm-z6npDWSiPMptOaOO8oYEsZ3g-3800KEmA/exec';
+
+        function formatKelasInput(kelas) {
+            return kelas.toUpperCase().trim();
+        }
+
+        async function cariSiswa() {
+            const nama = document.getElementById('nama').value.trim();
+            let kelas = document.getElementById('kelas').value.trim();
+            const btnSearch = document.getElementById('btnSearch');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultBox = document.getElementById('resultBox');
+
+            kelas = formatKelasInput(kelas);
+
+            if (!nama || !kelas) {
+                showError('Mohon isi nama lengkap dan kelas');
+                return;
+            }
+
+            if (!/^[0-9]+[A-Z]?$/.test(kelas)) {
+                showError('Format kelas tidak valid. Contoh: 2, 3A, 4B, 5, 6C');
+                return;
+            }
+
+            errorMessage.classList.remove('show');
+            resultBox.classList.remove('show');
+            btnSearch.disabled = true;
+            loading.classList.add('show');
+
+            try {
+                const response = await fetch(`${GAS_URL}?nama=${encodeURIComponent(nama)}&kelas=${encodeURIComponent(kelas)}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    tampilkanHasil(data);
+                }
+            } catch (error) {
+                showError('Terjadi kesalahan. Silakan coba lagi.');
+                console.error('Error:', error);
+            } finally {
+                btnSearch.disabled = false;
+                loading.classList.remove('show');
+            }
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            document.getElementById('resultBox').classList.remove('show');
+        }
+
+        function tampilkanHasil(data) {
+            document.getElementById('displayNama').textContent = data.nama;
+            document.getElementById('displayKelas').textContent = `Kelas ${data.kelas}`;
+
+            const testOrder = ['TARTIL', 'JUZ 30', 'JUZ 29'];
+            let totalTesDiikuti = 0;
+            let totalLulus = 0;
+
+            data.tests.forEach(test => {
+                totalTesDiikuti++;
+                if (test.status === 'LULUS') totalLulus++;
+            });
+
+            const summarySection = document.getElementById('summarySection');
+            summarySection.innerHTML = `
+                <div class="summary-title">RINGKASAN HASIL</div>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label">Tes Diikuti</div>
+                        <div class="summary-value">${totalTesDiikuti}/3</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Lulus</div>
+                        <div class="summary-value" style="color: #166534;">${totalLulus}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Tidak Lulus</div>
+                        <div class="summary-value" style="color: #991b1b;">${totalTesDiikuti - totalLulus}</div>
+                    </div>
+                </div>
+            `;
+
+            const testsContainer = document.getElementById('testsContainer');
+            testsContainer.innerHTML = '';
+
+            testOrder.forEach(testName => {
+                const testData = data.tests.find(t => t.namaTes === testName);
+                
+                const testCard = document.createElement('div');
+                testCard.className = `test-card ${testName.toLowerCase().replace(' ', '')}`;
+                
+                if (testData) {
+                    let scoreItems = '';
+                    
+                    if (testName === 'TARTIL') {
+                        const nilaiFields = ['TARTIL', 'FASHOHAH', 'GHORIB', 'TAJWID', 'TAHFIDZ 1', 'TAHFIDZ 2'];
+                        nilaiFields.forEach(field => {
+                            if (testData.nilai[field]) {
+                                scoreItems += `
+                                    <div class="score-item">
+                                        <span class="score-label">${field}</span>
+                                        <span class="score-value">${testData.nilai[field]}</span>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    
+                    if (testName === 'JUZ 30') {
+                        const surahFields = ['99-114', '88-98', '83-87', '78-82'];
+                        surahFields.forEach(field => {
+                            if (testData.nilai[field]) {
+                                scoreItems += `
+                                    <div class="score-item">
+                                        <span class="score-label">${field}</span>
+                                        <span class="score-value">${testData.nilai[field]}</span>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    
+                    if (testName === 'JUZ 29') {
+                        for (let i = 67; i <= 77; i++) {
+                            const field = i.toString();
+                            if (testData.nilai[field]) {
+                                scoreItems += `
+                                    <div class="score-item">
+                                        <span class="score-label">Surat ${field}</span>
+                                        <span class="score-value">${testData.nilai[field]}</span>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }
+
+                    if (scoreItems === '') {
+                        scoreItems = '<div style="text-align: center; padding: 10px; color: #94a3b8;">Tidak ada data nilai</div>';
+                    }
+
+                    testCard.innerHTML = `
+                        <div class="test-header">
+                            <span class="test-name ${testName.toLowerCase().replace(' ', '')}">${testName}</span>
+                            <span class="test-status ${testData.status === 'LULUS' ? 'lulus' : 'tidak-lulus'}">
+                                ${testData.status}
+                            </span>
+                        </div>
+                        <div class="score-list">
+                            ${scoreItems}
+                        </div>
+                        <div class="test-footer">
+                            <div class="test-total">
+                                Jumlah: <span>${testData.nilai['JUMLAH NILAI'] || testData.nilai['JUMLAH'] || '-'}</span>
+                            </div>
+                            <div class="test-total">
+                                Rata-rata: <span>${testData.nilai['NILAI RATA-RATA'] || testData.nilai['RATA-RATA'] || '-'}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    testCard.innerHTML = `
+                        <div class="test-header">
+                            <span class="test-name ${testName.toLowerCase().replace(' ', '')}">${testName}</span>
+                            <span class="test-status tidak-ikut">TIDAK MENGIKUTI</span>
+                        </div>
+                        <div style="text-align: center; padding: 15px; color: #94a3b8; font-size: 13px;">
+                            Siswa tidak mengikuti tes ${testName}
+                        </div>
+                    `;
+                }
+                
+                testsContainer.appendChild(testCard);
+            });
+
+            document.getElementById('resultBox').classList.add('show');
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        document.getElementById('nama').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') cariSiswa();
+        });
+
+        document.getElementById('kelas').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') cariSiswa();
+        });
+
+        document.getElementById('nama').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
+
+        document.getElementById('kelas').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
+    </script>
+</body>
+</html>
