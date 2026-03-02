@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Munaqosyah - Cek Hasil Seleksi</title>
+    <title>Pra-Munaqosyah</title>
     <style>
         * {
             margin: 0;
@@ -270,11 +270,15 @@
             border-top-color: #3b82f6;
         }
 
-        .test-card.juz30 {
+        .test-card.tartil-tahfidz-juz30 {
+            border-top-color: #8b5cf6;
+        }
+
+        .test-card.tahfidz-juz30 {
             border-top-color: #10b981;
         }
 
-        .test-card.juz29 {
+        .test-card.tahfidz-juz29 {
             border-top-color: #f59e0b;
         }
 
@@ -299,11 +303,15 @@
             color: #2563eb;
         }
 
-        .test-name.juz30 {
+        .test-name.tartil-tahfidz-juz30 {
+            color: #7c3aed;
+        }
+
+        .test-name.tahfidz-juz30 {
             color: #059669;
         }
 
-        .test-name.juz29 {
+        .test-name.tahfidz-juz29 {
             color: #d97706;
         }
 
@@ -488,8 +496,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><span>PENGUMUMAN SELEKSI MUNAQOSYAH</span></h1>
-            <p>Tartil, Juz 30, dan Juz 29</p>
+            <h1><span>HASIL SELEKSI PRA-MUNAQOSYAH</span></h1>
+            <p>Tartil • Tartil & Tahfidz Juz 30 • Tahfidz Juz 30 • Tahfidz Juz 29</p>
         </div>
 
         <div class="content">
@@ -550,7 +558,7 @@
     </div>
 
     <script>
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyCFMEO7iKQO1jOXNJLgxlB9Ow1BXoaEakm-z6npDWSiPMptOaOO8oYEsZ3g-3800KEmA/exec';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwB-t_BFWRIRrSTePi6yyYZtpnI_f-9rpzNJZvhyiGUrBpLRSpFsbtEzEpbOQHP940vvw/exec';
 
         function formatKelasInput(kelas) {
             return kelas.toUpperCase().trim();
@@ -610,7 +618,13 @@
             document.getElementById('displayNama').textContent = data.nama;
             document.getElementById('displayKelas').textContent = `Kelas ${data.kelas}`;
 
-            const testOrder = ['TARTIL', 'JUZ 30', 'JUZ 29'];
+            const testOrder = [
+                'TARTIL', 
+                'TARTIL & TAHFIDZ JUZ 30', 
+                'TAHFIDZ JUZ 30', 
+                'TAHFIDZ JUZ 29'
+            ];
+            
             let totalTesDiikuti = 0;
             let totalLulus = 0;
 
@@ -625,7 +639,7 @@
                 <div class="summary-grid">
                     <div class="summary-item">
                         <div class="summary-label">Tes Diikuti</div>
-                        <div class="summary-value">${totalTesDiikuti}/3</div>
+                        <div class="summary-value">${totalTesDiikuti}/4</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Lulus</div>
@@ -645,7 +659,17 @@
                 const testData = data.tests.find(t => t.namaTes === testName);
                 
                 const testCard = document.createElement('div');
-                testCard.className = `test-card ${testName.toLowerCase().replace(' ', '')}`;
+                
+                // Set class berdasarkan nama tes
+                if (testName === 'TARTIL') {
+                    testCard.className = 'test-card tartil';
+                } else if (testName === 'TARTIL & TAHFIDZ JUZ 30') {
+                    testCard.className = 'test-card tartil-tahfidz-juz30';
+                } else if (testName === 'TAHFIDZ JUZ 30') {
+                    testCard.className = 'test-card tahfidz-juz30';
+                } else if (testName === 'TAHFIDZ JUZ 29') {
+                    testCard.className = 'test-card tahfidz-juz29';
+                }
                 
                 if (testData) {
                     let scoreItems = '';
@@ -664,8 +688,13 @@
                         });
                     }
                     
-                    if (testName === 'JUZ 30') {
-                        const surahFields = ['99-114', '88-98', '83-87', '78-82'];
+                    if (testName === 'TARTIL & TAHFIDZ JUZ 30' || testName === 'TAHFIDZ JUZ 30') {
+                        const surahFields = [
+                            'الزلزالة-الناس', 
+                            'الغاشية -البينة', 
+                            'المطففين-الاعلى', 
+                            'النباء - الانفطار'
+                        ];
                         surahFields.forEach(field => {
                             if (testData.nilai[field]) {
                                 scoreItems += `
@@ -678,27 +707,32 @@
                         });
                     }
                     
-                    if (testName === 'JUZ 29') {
-                        for (let i = 67; i <= 77; i++) {
-                            const field = i.toString();
+                    if (testName === 'TAHFIDZ JUZ 29') {
+                        const surahFields = [
+                            'المرسلات', 'الإنسان', 'القيامة', 'المدثر', 'المزمل', 
+                            'الجن', 'نوح', 'المعارج', 'الحاقة', 'القلم', 'الملك'
+                        ];
+                        surahFields.forEach(field => {
                             if (testData.nilai[field]) {
                                 scoreItems += `
                                     <div class="score-item">
-                                        <span class="score-label">Surat ${field}</span>
+                                        <span class="score-label">${field}</span>
                                         <span class="score-value">${testData.nilai[field]}</span>
                                     </div>
                                 `;
                             }
-                        }
+                        });
                     }
 
                     if (scoreItems === '') {
                         scoreItems = '<div style="text-align: center; padding: 10px; color: #94a3b8;">Tidak ada data nilai</div>';
                     }
 
+                    const testNameClass = testName.toLowerCase().replace(/[ &]/g, '-');
+                    
                     testCard.innerHTML = `
                         <div class="test-header">
-                            <span class="test-name ${testName.toLowerCase().replace(' ', '')}">${testName}</span>
+                            <span class="test-name ${testNameClass}">${testName}</span>
                             <span class="test-status ${testData.status === 'LULUS' ? 'lulus' : 'tidak-lulus'}">
                                 ${testData.status}
                             </span>
@@ -716,9 +750,11 @@
                         </div>
                     `;
                 } else {
+                    const testNameClass = testName.toLowerCase().replace(/[ &]/g, '-');
+                    
                     testCard.innerHTML = `
                         <div class="test-header">
-                            <span class="test-name ${testName.toLowerCase().replace(' ', '')}">${testName}</span>
+                            <span class="test-name ${testNameClass}">${testName}</span>
                             <span class="test-status tidak-ikut">TIDAK MENGIKUTI</span>
                         </div>
                         <div style="text-align: center; padding: 15px; color: #94a3b8; font-size: 13px;">
