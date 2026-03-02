@@ -553,8 +553,38 @@
         </div>
 
         <div class="footer">
-            <p>© Copyright 2026. All Rights Reserved by Sekolah Islam Terpadu Nurul Iman Semarang</p>
-        </div>
+    <p class="footer-text">
+        &copy; <span id="year"></span> Sekolah Islam Terpadu Nurul Iman Semarang.
+        <span class="divider">•</span>
+        All rights reserved.
+    </p>
+    </div>
+
+    <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+    <style>
+    .footer {
+    text-align: center;
+    padding: 20px 10px;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 40px;
+    }
+
+    .footer-text {
+    font-size: 14px;
+    color: #888;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    margin: 0;
+    letter-spacing: 0.3px;
+    }
+
+    .footer-text .divider {
+    margin: 0 6px;
+    color: #ccc;
+    }
+    </style>
     </div>
 
     <script>
