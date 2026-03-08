@@ -270,10 +270,6 @@
             border-top-color: #3b82f6;
         }
 
-        .test-card.tartil-tahfidz-juz30 {
-            border-top-color: #8b5cf6;
-        }
-
         .test-card.tahfidz-juz30 {
             border-top-color: #10b981;
         }
@@ -286,9 +282,17 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
             margin-bottom: 12px;
+        }
+
+        .test-name-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            flex: 1;
         }
 
         .test-name {
@@ -296,15 +300,12 @@
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .test-name.tartil {
             color: #2563eb;
-        }
-
-        .test-name.tartil-tahfidz-juz30 {
-            color: #7c3aed;
         }
 
         .test-name.tahfidz-juz30 {
@@ -313,6 +314,22 @@
 
         .test-name.tahfidz-juz29 {
             color: #d97706;
+        }
+
+        .test-catatan {
+            font-size: 12px;
+            font-weight: normal;
+            color: #1e40af;
+            background: #dbeafe;
+            padding: 6px 14px;
+            border-radius: 30px;
+            display: inline-block;
+            max-width: 100%;
+            word-break: break-word;
+            border: 1px solid #bfdbfe;
+            margin-top: 2px;
+            margin-bottom: 4px;
+            width: fit-content;
         }
 
         .test-status {
@@ -497,7 +514,7 @@
     <div class="container">
         <div class="header">
             <h1><span>HASIL SELEKSI PRA-MUNAQOSYAH</span></h1>
-            <p>Tartil • Tartil & Tahfidz Juz 30 • Tahfidz Juz 30 • Tahfidz Juz 29</p>
+            <p>Tartil • Tahfidz Juz 30 • Tahfidz Juz 29</p>
         </div>
 
         <div class="content">
@@ -553,11 +570,12 @@
         </div>
 
         <div class="footer">
-    <p class="footer-text">
-        &copy; <span id="year"></span> Sekolah Islam Terpadu Nurul Iman Semarang.
-        <span class="divider">•</span>
-        All rights reserved.
-    </p>
+            <p class="footer-text">
+                &copy; <span id="year"></span> Sekolah Islam Terpadu Nurul Iman Semarang.
+                <span class="divider">•</span>
+                All rights reserved.
+            </p>
+        </div>
     </div>
 
     <script>
@@ -566,29 +584,28 @@
 
     <style>
     .footer {
-    text-align: center;
-    padding: 20px 10px;
-    border-top: 1px solid #e5e5e5;
-    margin-top: 40px;
+        text-align: center;
+        padding: 20px 10px;
+        border-top: 1px solid #e5e5e5;
+        margin-top: 40px;
     }
 
     .footer-text {
-    font-size: 14px;
-    color: #888;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    margin: 0;
-    letter-spacing: 0.3px;
+        font-size: 14px;
+        color: #888;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        margin: 0;
+        letter-spacing: 0.3px;
     }
 
     .footer-text .divider {
-    margin: 0 6px;
-    color: #ccc;
+        margin: 0 6px;
+        color: #ccc;
     }
     </style>
-    </div>
 
     <script>
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwB-t_BFWRIRrSTePi6yyYZtpnI_f-9rpzNJZvhyiGUrBpLRSpFsbtEzEpbOQHP940vvw/exec';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxK4EcsgDMkrfq4mv7JOQ9C3qz9m1dp5ELjDBsF2GdGyXJqU_7VqpsJIJi23Ni9LymJtA/exec';
 
         function formatKelasInput(kelas) {
             return kelas.toUpperCase().trim();
@@ -648,9 +665,9 @@
             document.getElementById('displayNama').textContent = data.nama;
             document.getElementById('displayKelas').textContent = `Kelas ${data.kelas}`;
 
+            // Urutan tes: TARTIL, TAHFIDZ JUZ 30, TAHFIDZ JUZ 29
             const testOrder = [
                 'TARTIL', 
-                'TARTIL & TAHFIDZ JUZ 30', 
                 'TAHFIDZ JUZ 30', 
                 'TAHFIDZ JUZ 29'
             ];
@@ -669,7 +686,7 @@
                 <div class="summary-grid">
                     <div class="summary-item">
                         <div class="summary-label">Tes Diikuti</div>
-                        <div class="summary-value">${totalTesDiikuti}/4</div>
+                        <div class="summary-value">${totalTesDiikuti}</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Lulus</div>
@@ -692,8 +709,6 @@
                 
                 if (testName === 'TARTIL') {
                     testCard.className = 'test-card tartil';
-                } else if (testName === 'TARTIL & TAHFIDZ JUZ 30') {
-                    testCard.className = 'test-card tartil-tahfidz-juz30';
                 } else if (testName === 'TAHFIDZ JUZ 30') {
                     testCard.className = 'test-card tahfidz-juz30';
                 } else if (testName === 'TAHFIDZ JUZ 29') {
@@ -702,11 +717,25 @@
                 
                 if (testData) {
                     let scoreItems = '';
+                    let catatanHtml = '';
+                    
+                    // CEK CATATAN - tampilkan jika ada dan tidak sama dengan nama tes
+                    if (testData.catatan && testData.catatan.toString().trim() !== '') {
+    const catatan = testData.catatan.toString().trim();
+    // Tampilkan catatan hanya jika BERBEDA dengan nama tes
+    if (catatan !== testName) {
+        catatanHtml = `<div class="test-catatan">${catatan}</div>`;
+        console.log('Menampilkan catatan untuk', testName, ':', catatan); // Untuk debugging
+    } else {
+        console.log('Catatan sama dengan nama tes, tidak ditampilkan:', catatan);
+    }
+}
                     
                     if (testName === 'TARTIL') {
+                        // Field untuk TARTIL
                         const nilaiFields = ['TARTIL', 'FASHOHAH', 'GHORIB', 'TAJWID', 'TAHFIDZ 1', 'TAHFIDZ 2'];
                         nilaiFields.forEach(field => {
-                            if (testData.nilai[field]) {
+                            if (testData.nilai && testData.nilai[field] !== undefined && testData.nilai[field] !== '') {
                                 scoreItems += `
                                     <div class="score-item">
                                         <span class="score-label">${field}</span>
@@ -717,7 +746,8 @@
                         });
                     }
                     
-                    if (testName === 'TARTIL & TAHFIDZ JUZ 30' || testName === 'TAHFIDZ JUZ 30') {
+                    if (testName === 'TAHFIDZ JUZ 30') {
+                        // Field sesuai spreadsheet
                         const surahFields = [
                             'الزلزالة-الناس', 
                             'الغاشية -البينة', 
@@ -725,7 +755,7 @@
                             'النباء - الانفطار'
                         ];
                         surahFields.forEach(field => {
-                            if (testData.nilai[field]) {
+                            if (testData.nilai && testData.nilai[field] !== undefined && testData.nilai[field] !== '') {
                                 scoreItems += `
                                     <div class="score-item">
                                         <span class="score-label">${field}</span>
@@ -742,7 +772,7 @@
                             'الجن', 'نوح', 'المعارج', 'الحاقة', 'القلم', 'الملك'
                         ];
                         surahFields.forEach(field => {
-                            if (testData.nilai[field]) {
+                            if (testData.nilai && testData.nilai[field] !== undefined && testData.nilai[field] !== '') {
                                 scoreItems += `
                                     <div class="score-item">
                                         <span class="score-label">${field}</span>
@@ -761,7 +791,10 @@
                     
                     testCard.innerHTML = `
                         <div class="test-header">
-                            <span class="test-name ${testNameClass}">${testName}</span>
+                            <div class="test-name-container">
+                                <span class="test-name ${testNameClass}">${testName}</span>
+                                ${catatanHtml}
+                            </div>
                             <span class="test-status ${testData.status === 'LULUS' ? 'lulus' : 'tidak-lulus'}">
                                 ${testData.status}
                             </span>
@@ -771,10 +804,10 @@
                         </div>
                         <div class="test-footer">
                             <div class="test-total">
-                                Jumlah: <span>${testData.nilai['JUMLAH NILAI'] || testData.nilai['JUMLAH'] || '-'}</span>
+                                Jumlah: <span>${(testData.nilai && testData.nilai['JUMLAH NILAI']) || (testData.nilai && testData.nilai['JUMLAH']) || '-'}</span>
                             </div>
                             <div class="test-total">
-                                Rata-rata: <span>${testData.nilai['NILAI RATA-RATA'] || testData.nilai['RATA-RATA'] || '-'}</span>
+                                Rata-rata: <span>${(testData.nilai && testData.nilai['NILAI RATA-RATA']) || (testData.nilai && testData.nilai['RATA-RATA']) || '-'}</span>
                             </div>
                         </div>
                     `;
